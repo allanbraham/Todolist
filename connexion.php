@@ -11,7 +11,6 @@ if(isset($_POST['connexion'])){
         
         if($recupUser->rowCount() > 0){
             $_SESSION['id'] = $recupUser->fetch()['id'];
-            $_SESSION['prenom'] = $prenom;
             $_SESSION['mail'] = $mail;
             $_SESSION['mdp'] = $mdp;
             header('location: utilisateur.php');
