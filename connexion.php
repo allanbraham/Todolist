@@ -1,3 +1,28 @@
+<?php
+session_start();
+$bdd = new PDO('mysql:host=localhost;dbname=espace_membre', 'root', '');
+if(isset($_POST['connexion'])){
+    if(!empty($_POST['mail']) AND !empty($_POST['mdp'])){
+        $mail = htmlspecialchars($_POST['mail']);
+        $mdp = sha1($_POST['mdp']);
+
+        $recupUser = $bdd->prepare('SELECT * FROM espace_membre WHERE email = ? AND mdp = ?');
+        $recupUser->execute(array($mail, $mdp));
+        
+        if($recupUser->rowCount() > 0){
+            $_SESSION['id'] = $recupUser->fetch()['id'];
+            $_SESSION['prenom'] = $prenom;
+            $_SESSION['mail'] = $mail;
+            $_SESSION['mdp'] = $mdp;
+            header('location: utilisateur.php');
+        }else{
+            echo "Votre email ou mot de passe est incorrect"; 
+        }
+    }else{
+        echo "Veuillez compléter tous les champs...";
+    }    
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,14 +56,16 @@
     </nav>
     <div class="div">
         <h1>Connexion</h1>
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Adresse e-mail :</label>
-            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-        </div>
-        <div class="mb-3">
-            <label for="inputPassword5" class="form-label">Mot de passe :</label>
-            <input type="password" id="inputPassword5" class="form-control" aria-describedby="passwordHelpBlock" placeholder="********">
-        </div>
-        <button type="submit" class="btn btn-primary">Connexion</button>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Adresse e-mail :</label>
+                <input type="email" class="form-control" id="exampleFormControlInput1" name="mail" placeholder="name@example.com">
+            </div>
+            <div class="mb-3">
+                <label for="inputPassword5" class="form-label">Mot de passe :</label>
+                <input type="password" id="inputPassword5" class="form-control" aria-describedby="passwordHelpBlock" name="mdp" placeholder="********">
+            </div>
+            <button type="submit" name="connexion" class="btn btn-primary">Connexion</button>
+        </form>    
     </div>
 </body>
